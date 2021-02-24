@@ -2,11 +2,13 @@ package com.appalber.firststepsgmaps;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,6 +27,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Spinner spn_ciudades;
     Button btn_mostrar;
     Marker marcador;
+    Context contexto = this;
     private List<Ciudad> ciudades;
 
     @Override
@@ -86,6 +89,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+
     }
 
     @Override
@@ -98,7 +103,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void cambiarMapa(Ciudad c) {
         mMap.clear();
         LatLng ciudad = new LatLng(c.getLat(), c.getLng());
-        mMap.addMarker(new MarkerOptions().position(ciudad).title("Marker in "+c.getCity()));
+        marcador =  mMap.addMarker(new MarkerOptions().position(ciudad).title("Marker in "+c.getCity()));
+        marcador.setTag(c.getCity());
+
         mMap.moveCamera(CameraUpdateFactory.newLatLng(ciudad));
+        //Añadimos un toast
+        GoogleMap.OnMarkerClickListener oyente_marcador = new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                String etiqueta = (String) marker.getTag();
+                Toast.makeText(contexto,"has clicado en " +etiqueta, Toast.LENGTH_LONG).show();
+                return true;
+            }
+        };
+        mMap.setOnMarkerClickListener(oyente_marcador);
+
+
     }
 }
